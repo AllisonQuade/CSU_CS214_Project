@@ -1,0 +1,42 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Cs214Project",
+            "request": "launch",
+            "mainClass": "Cs214Project",
+            "projectName": "workspace",
+            "args": [
+                "database/files/file3_PA5.csv",
+                "OutputTEST.csv",
+                "-r",
+                // "song8",
+                // "song1"
+                "song3",
+                "song5",
+                "song6"
+            ]
+        },
+        // {
+        //     "type": "java",
+        //     "name": "Debug Main",
+        //     "request": "launch",
+        //     "mainClass": "Cs214Project.java"
+        // },
+        {
+            "type": "jdk",
+            "request": "launch",
+            "name": "Launch Java App"
+        },
+        {
+            "name": "Launch Java: Continuous Mode",
+            "type": "jdk",
+            "request": "launch",
+            "launchConfiguration": "Continuous Mode"
+        }
+    ]
+}

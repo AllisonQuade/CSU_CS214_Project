@@ -1,0 +1,16 @@
+song,user,predicted rating
+song1,user5,NaN
+song2,user3,NaN
+song2,user4,NaN
+song2,user5,NaN
+song3,user1,4
+song3,user2,5
+song3,user5,NaN
+song4,user5,NaN
+song5,user1,4
+song5,user2,5
+song5,user4,NaN
+song6,user1,NaN
+song6,user2,NaN
+song6,user3,4
+song6,user4,NaN

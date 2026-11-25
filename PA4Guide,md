@@ -1,0 +1,355 @@
+# PA4 – Prediction
+
+## Overview
+
+In PA3, we calculated similarity between songs. In PA4, we will calculate similarity between users and use that similarity to predict ratings for songs users have not rated.
+
+The program supports three modes:
+
+- **Default mode:** Calculate song rating statistics.
+- **`-u` mode:** Calculate user similarities.
+- **`-p` mode:** Predict missing ratings.
+
+---
+
+## 1. Tasks
+
+### Task A: Calculate User Similarity
+
+Use the same general similarity method as PA3, but compare users instead of songs.
+
+1. Clean up the data as in previous assignments.
+2. Normalize ratings by each user's mean and standard deviation.
+3. Compare two users using only songs that both users rated.
+4. Calculate the Euclidean distance between their normalized ratings.
+5. Sort each user's other users from most similar to least similar.
+
+**Important:** A smaller similarity score means users are more similar. A larger score means their rating tendencies differ more.
+
+For a comparison involving one shared song, the distance is:
+
+```text
+distance = sqrt((x1 - x2)^2)
+```
+
+Here, `x` refers to a song, and the subscripts identify the two users.
+
+**Requirement:** At least two cooperative users are needed to calculate user similarity. If there are fewer than two, report an error and exit gracefully.
+
+### Implementation Hint
+
+The assignment suggests considering an interface such as `SimilarityComparable`, implemented by both `Song` and `User`.
+
+The interface could provide methods for:
+
+- Accessing normalized ratings.
+- Checking whether a rating exists.
+
+The similarity calculation could accept a list of `SimilarityComparable` objects and a list of dimensions. This can reduce duplicated code and make the implementation easier to extend.
+
+This design is a suggestion, not the only valid approach.
+
+---
+
+## 2. Predict Missing Ratings
+
+For each song a target user has not rated:
+
+1. Find the other user most similar to the target user who has rated that song.
+2. Borrow that user's normalized rating for the song.
+3. Convert the borrowed normalized rating back to the target user's rating scale using the target user's mean and standard deviation.
+4. Round the result to the nearest integer.
+5. If the closest user has not rated the song, continue through the users in similarity order until a suitable user is found.
+
+### Prediction Formula
+
+```text
+predictedRating = round(
+    otherUser.normalizedRating * targetUser.stdDeviation
+    + targetUser.mean
+)
+```
+
+### Edge Case 1: No Similar User Has Rated the Song
+
+If no other user both:
+- Has a valid similarity score with the target user.
+- Has rated the song.
+
+Then the predicted rating is `NaN`.
+
+**Example:** `user5` has not rated `song2`. The only users who rated `song2` are `user1` and `user2`, but neither has a valid similarity score with `user5`.
+
+Result:
+
+```csv
+song2,user5,NaN
+```
+
+### Edge Case 2: Prediction Outside the Allowed Range
+
+Predicted ratings must be between **1 and 5**.
+
+- If the prediction is less than `1`, set it to `1`.
+- If the prediction is greater than `5`, set it to `5`.
+
+---
+
+## 3. Worked Example
+
+### Example Input Ratings
+
+The input CSV uses the format `song,user,rating`.
+
+```csv
+song1,user1,2
+song2,user1,3
+song4,user1,4
+song1,user2,2
+song2,user2,3
+song4,user2,5
+song1,user3,4
+song3,user3,5
+song4,user3,4
+song5,user3,5
+song1,user4,1
+song3,user4,2
+song4,user4,1
+song5,user5,3
+song6,user5,2
+```
+
+### Raw Ratings
+
+A dash (`-`) means the user has not rated that song.
+
+| Song | user1 | user2 | user3 | user4 | user5 |
+|---|---:|---:|---:|---:|---:|
+| song1 | 2 | 2 | 4 | 1 | - |
+| song2 | 3 | 3 | - | - | - |
+| song3 | - | - | 5 | 2 | - |
+| song4 | 4 | 5 | 4 | 1 | - |
+| song5 | - | - | 5 | - | 3 |
+| song6 | - | - | - | - | 2 |
+
+### Normalized Ratings
+
+| Song | user1 | user2 | user3 | user4 |
+|---|---:|---:|---:|---:|
+| song1 | -1.224744871391589 | -1.0690449676496978 | -1.0 | -0.707106781186 |
+| song2 | 0.0 | -0.2672612419124245 | - | - |
+| song3 | - | - | 1.0 | 1.4142135623730 |
+| song4 | 1.224744871391589 | 1.3363062095621219 | -1.0 | -0.707106781186 |
+| song5 | - | - | 1.0 | - |
+| song6 | - | - | - | - |
+
+### User Similarity Scores
+
+The source example's similarity table is shown below. `NaN` indicates that a valid similarity score is unavailable.
+
+| User | user1 | user2 | user3 |
+|---|---:|---:|---:|
+| user1 | 0.0 | 0.32881144084141245 | 2.23606797749979 |
+| user2 | 0.32881144084141245 | 0.0 | 2.337326231486798 |
+| user3 | 2.23606797749979 | 2.337326231486798 | 0.0 |
+| user4 | 1.9999999999999998 | 2.0752194827489103 | 0.5857864376269052 |
+| user5 | NaN | NaN | 0.0 |
+
+### Other Users in Similarity Order
+
+Each list is ordered from most similar to least similar, from left to right.
+
+```text
+user1: [user2, user4, user3]
+user2: [user1, user4, user3]
+user3: [user5, user4, user1, user2]
+user4: [user3, user1, user2]
+user5: [user3]
+```
+
+### Normalized Ratings With Predictions
+
+| Song | user1 | user2 | user3 | user4 |
+|---|---:|---:|---:|---:|
+| song1 | -1.224744871391589 | -1.0690449676496978 | -1.0 | -0.707106781186 |
+| song2 | 0.0 | -0.2672612419124245 | 0.0 | 0.0 |
+| song3 | 1.4142135623730951 | 1.4142135623730951 | 1.0 | 1.414213562373 |
+| song4 | 1.224744871391589 | 1.3363062095621219 | -1.0 | -0.707106781186 |
+| song5 | 1.0 | 1.0 | 1.0 | 1.0 |
+| song6 | - | - | -1.0 | - |
+
+### Raw Ratings With Predictions
+
+| Song | user1 | user2 | user3 | user4 | user5 |
+|---|---:|---:|---:|---:|---:|
+| song1 | 2 | 2 | 4 | 1 | 2 |
+| song2 | 3 | 3 | 5 | 1 | NaN |
+| song3 | 4 | 5 | 5 | 2 | 3 |
+| song4 | 4 | 5 | 4 | 1 | 2 |
+| song5 | 4 | 5 | 5 | 2 | 3 |
+| song6 | NaN | NaN | 4 | NaN | 2 |
+
+---
+
+## 4. Output Requirements
+
+### Prediction Output (`-p`)
+
+Calculate a similarity table for all users, then predict the missing ratings.
+
+The output CSV must have this header:
+
+```csv
+song,user,predicted rating
+```
+
+Include only missing ratings, not ratings that were already present in the input.
+
+Output rows must be sorted in **lexicographical order by song, then by user name**.
+
+For each prediction:
+
+- De-normalize using the target user's mean and standard deviation.
+- Round to the nearest integer.
+- Clamp the result to the range `1–5`.
+- Write `NaN` if no eligible similar user has rated the song.
+
+### User Similarity Output (`-u`)
+
+The output CSV must have this header:
+
+```csv
+name1,name2,similarity
+```
+
+Example:
+
+```csv
+name1,name2,similarity
+user1,user2,0.0
+user1,user3,2.8284271247461903
+user2,user3,2.8284271247461903
+```
+
+### Default Output: Song Statistics
+
+When only the input and output file arguments are supplied, write song rating statistics.
+
+The output CSV header is:
+
+```csv
+song,number of ratings,mean,standard deviation
+```
+
+Example:
+
+```csv
+song,number of ratings,mean,standard deviation
+song1,2,2.5,1.5
+song2,2,3.5,1.5
+song3,1,1.0,0.0
+```
+
+---
+
+## 5. Error Handling
+
+- All error cases from previous assignments still apply.
+- All PA3 similarity-related errors also apply to PA4 prediction.
+- If there are fewer than two cooperative users, report an error.
+- If `-p` is passed but there are no missing ratings (every song has been rated by every user), report an error.
+- If the third argument is present and is not `-a`, `-u`, or `-p`, report an error.
+
+---
+
+## 6. Running the Program
+
+The first argument is the input CSV file. The second argument is the output CSV file. The optional third argument selects the mode.
+
+### Default Mode: Song Statistics
+
+```bash
+gradle run -q --args="'database/files/file2.csv' 'output.csv'"
+```
+
+### User Similarities: `-u`
+
+```bash
+gradle run -q --args="'database/files/file1.csv' 'similarity.csv' '-u'"
+```
+
+### Predictions: `-p`
+
+```bash
+gradle run -q --args="'database/files/file4.csv' 'user_predictions.csv' '-p'"
+```
+
+### Write Output to an Existing Directory
+
+```bash
+gradle run -q --args="'database/files/file3.csv' 'existing_folder/predictions.csv' '-p'"
+```
+
+**Do not hard-code input or output paths.**
+
+The user must be able to choose which input CSV to read and the name and location of the output CSV.
+
+Use the `String[] args` parameter in the `main` method to read command-line arguments.
+
+Only one output file is created per run. The output's contents depend on whether `-u` or `-p` is supplied.
+
+---
+
+## 7. Example Prediction Output
+
+For the command:
+
+```bash
+gradle run -q --args="'database/files/file4.csv' 'user_predictions.csv' '-p'"
+```
+
+The output is:
+
+```csv
+song,user,predicted rating
+All Star,charlie,4
+Bohemian Rhapsody,alex,2
+Sweet Home Alabama,alex,3
+We Will Rock You,cameron,1
+We Will Rock You,charlie,NaN
+```
+
+Another example output:
+
+```csv
+song,user,predicted rating
+song1,user5,2
+song2,user3,5
+song2,user4,1
+song2,user5,NaN
+song3,user1,4
+song3,user2,5
+song3,user5,3
+song4,user5,2
+song5,user1,4
+song5,user2,5
+song5,user4,2
+song6,user1,NaN
+song6,user2,NaN
+song6,user3,4
+song6,user4,NaN
+```
+
+If `-p` is passed for an input with no missing ratings, the example error output is:
+
+```text
+Error: no predictions to be made
+```
+
+---
+
+## 8. Hints
+
+- Predicted ratings must be rounded to the nearest integer, not truncated.
+- Test and develop the program on the department Linux machines, because that is where it will be evaluated.
+- Java may behave differently across environments, so verify that your program works in the evaluation environment.

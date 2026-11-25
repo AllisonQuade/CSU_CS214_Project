@@ -1,0 +1,145 @@
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+// ******************************************************************
+// ******************************************************************
+// TERMINAL COMMANDS TO RUN PROGRAM
+// ******************************************************************
+// gradle run -q --args="'database/files/file2.csv' 'output.csv'"gradle run -q --args="'database/files/file2.csv' 'output.csv'"
+// ******************************************************************
+
+/**
+ * 
+ * Cs214Project Main
+ */
+public class Cs214Project {
+
+    /**
+     * Calls methods to validate arguments passed in by user,
+     * 
+     * @param args User input.
+     */
+    public static void validateArguments(String[] args) {
+        validateNumberOfArguments(args);
+        validateFirstAndSecondArguments(args);
+        validateThirdArguments(args);
+        verifyUserChoice(args);
+    }
+
+    /**
+     * Checks if there are at least 2 or three arguments given.
+     * 
+     * @param args User input.
+     */
+    public static void validateNumberOfArguments(String[] args) {
+        if (args.length < 2) {
+            throw new IllegalArgumentException(args.length + " is out of bounds. Requires at least two arguments.");
+        }
+    }
+
+    /**
+     * Test that requires first and second argument is inputted.
+     * 
+     * @param args User input.
+     */
+    public static void validateFirstAndSecondArguments(String[] args) {
+        if (util_FormatOutput.isNullOrEmpty(args[0])) {
+            throw new IllegalArgumentException("Arguments 1 is required. It must include file input path.");
+        }
+
+        if (util_FormatOutput.isNullOrEmpty(args[1])) {
+            throw new IllegalArgumentException("Arguments 2 is required. It must include output file.");
+        }
+
+    }
+
+    /**
+     * Makes sure third argument is "-a", "-u", "-p" or "".
+     * 
+     * @param args User input.
+     */
+    public static void validateThirdArguments(String[] args) {
+        ArrayList<String> commands = new ArrayList<>(Arrays.asList("-a", "-u", "-p", ""));
+        if (args.length == 3 && !commands.contains(args[2])) {
+            throw new IllegalArgumentException("\"-a\" or \"-u\" or \"-p\"  required for PA2 or PA4.");
+        } else if (args.length >= 4 && !args[2].equals("-r")) {
+            throw new IllegalArgumentException("\"-r\" required for PA5.");
+        }
+    }
+
+    public static void verifyUserChoice(String[] args) {
+        if (args.length == 3 && args[2].equals("-r")) {
+            throw new IllegalArgumentException("must select at least one song for recommendations");
+        }
+    }
+
+    /**
+     * Runs program for each PA
+     * 
+     * @param args user inputs
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
+    public static void main(String[] args) throws IOException, FileNotFoundException {
+        // Open the project in Codio's integrated Visual Studio Code!
+        // See Hints or README.md for more information
+        try { // graceful exit (no red error meassage)
+            validateArguments(args);
+            processPA(args);
+        } catch (Exception e) {
+            util_FormatOutput.printError(e.getMessage());
+        }
+    }
+
+    private static void processPA(String[] args) throws IOException {
+        String input = args[0]; // the input file
+        String output = args[1]; // the output file
+
+        String PASelector = args.length >= 3 ? args[2] : ""; // Which PA?
+
+        switch (PASelector) {
+            case "-a" -> {
+                // PA2 PA service factory
+
+                SongUserServicePA2 SongUserServicePA2 = new SongUserServicePA2();
+                SongUserServicePA2.loadAndProcessData(input);
+                SongUserServicePA2.outputUsersSongsRatingsCSV(output);
+            }
+            case "-u" -> {
+                // PA3
+                SongUserServicePA3V2 SongUserServicePA3 = new SongUserServicePA3V2();
+                SongUserServicePA3.loadAndProcessData(input);
+                SongUserServicePA3.outputUsersSongsRatingsCSV(output);
+            }
+            // case "-u" -> {
+            // // PA4
+            // SongUserServicePA4 SongUserServicePA4 = new SongUserServicePA4();
+            // SongUserServicePA4.loadAndProcessDataUserSimilarity(input);
+            // SongUserServicePA4.outputUsersSongsRatingsCSV(output);
+            // }
+            case "-p" -> {
+                SongUserServicePA4 SongUserServicePA4 = new SongUserServicePA4();
+                SongUserServicePA4.loadAndProcessDataPrediction(input);
+                SongUserServicePA4.outputUsersSongsRatingPredictionsCSV(output);
+            }
+            case "-r" -> {
+                String[] userSongSelection = new String[args.length - 3];
+
+                // https://www.geeksforgeeks.org/java/arrays-copyof-in-java-with-examples/
+                System.arraycopy(args, 3, userSongSelection, 0, args.length - 3); // copy args to userSongSelection
+
+                SongUserServicePA5 SongUserServicePA5 = new SongUserServicePA5();
+                SongUserServicePA5.loadAndProcessDataUserClustering(input, userSongSelection);
+                SongUserServicePA5.outputUserChoiceRecommendations(output);
+            }
+            default -> {
+                // PA1
+                SongUserServicePA1 SongUserServicePA1 = new SongUserServicePA1();
+                LoadSongsandUsersFromCSV_Result songsAndUsers = SongUserServicePA1.loadSongsandUsersFromCSV(input);
+                SongUserServicePA1.outputUsersSongsRatingsCSV(output, songsAndUsers.songList);
+            }
+        }
+    }
+}
