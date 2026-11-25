@@ -20,7 +20,7 @@ public class Test_SongUserServicePA5 {
         SongUserServicePA5 songUserServicePA5 = new SongUserServicePA5();
         FileNotFoundException e = assertThrows(
                 FileNotFoundException.class,
-                () -> songUserServicePA5.loadUsersFromCSV("database/files/testfiles/unkown.csv"),
+                () -> songUserServicePA5.loadAndProcessDataUserClustering("database/files/testfiles/unkown.csv", new String[] { "song1", "song2" }),
                 "test_inputfileNotFound did not return expected exception.");
         util_FormatOutput.printError(e.getMessage());
     }
@@ -30,7 +30,7 @@ public class Test_SongUserServicePA5 {
         SongUserServicePA5 songUserServicePA5 = new SongUserServicePA5();
         IllegalArgumentException e = assertThrows(
                 IllegalArgumentException.class,
-                () -> songUserServicePA5.loadUsersFromCSV(""),
+                () -> songUserServicePA5.loadAndProcessDataUserClustering("", new String[] { "song1", "song2" }),
                 "test_inputfileEmpty did not return expected exception.");
         util_FormatOutput.printError(e.getMessage());
     }
@@ -40,7 +40,7 @@ public class Test_SongUserServicePA5 {
         SongUserServicePA5 songUserServicePA5 = new SongUserServicePA5();
         IllegalArgumentException e = assertThrows(
                 IllegalArgumentException.class,
-                () -> songUserServicePA5.loadUsersFromCSV(null),
+                () -> songUserServicePA5.loadAndProcessDataUserClustering(null, new String[] { "song1", "song2" }),
                 "test_inputfileNull did not return expected exception.");
         util_FormatOutput.printError(e.getMessage());
     }
@@ -72,7 +72,7 @@ public class Test_SongUserServicePA5 {
             file.delete();
         }
         SongUserServicePA5 songUserServicePA5 = new SongUserServicePA5();
-        songUserServicePA5.loadUsersFromCSV("database/files/testfiles/PA2tests/test_outputfile_success.csv");
+        songUserServicePA5.loadAndProcessDataUserClustering("database/files/testfiles/PA2tests/test_outputfile_success.csv", new String[] { "song1", "song2" });
         songUserServicePA5.outputUserChoiceRecommendations(outputFileName);
         assertEquals(true, file.exists(), "test_OutputFileSuccess did not return expected exception.");
     }
@@ -130,7 +130,7 @@ public class Test_SongUserServicePA5 {
         songUserServicePA5.processUserData("song2", "user2", 4);
         songUserServicePA5.getMasterSongNameList().add("song1");
         songUserServicePA5.getMasterSongNameList().add("song2");
-        songUserServicePA5.calcSimilarity();
+        songUserServicePA5.calcUserSimilarity();
         Double[][] exampleMatrix = songUserServicePA5.getUserSimilarityMatrix();
         assertEquals(2, exampleMatrix.length);
         assertEquals(2, exampleMatrix[0].length);

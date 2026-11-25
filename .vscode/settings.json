@@ -1,3 +1,4 @@
 {
-    "gradle.javaDebug": true
+    "gradle.javaDebug": true,
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

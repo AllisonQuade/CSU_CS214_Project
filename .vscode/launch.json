@@ -9,34 +9,83 @@
             "name": "Cs214Project",
             "request": "launch",
             "mainClass": "Cs214Project",
-            "projectName": "workspace",
+            "projectName": "CSU_CS214_Project"
+        },
+        {
+            "type": "java",
+            "request": "launch",
+            "name": "Launch Cs214Project PA1",
+            "mainClass": "Cs214Project",
+            "projectName": "CSU_CS214_Project",
+            "args": [
+                "database/files/file1.csv",
+                "OutputPA1.csv"
+            ]
+        },
+        {
+            "type": "java",
+            "request": "launch",
+            "name": "Launch Cs214Project PA2",
+            "mainClass": "Cs214Project",
+            "projectName": "CSU_CS214_Project",
+            "args": [
+                "database/files/file4_pa2.csv",
+                "OutputPA2.csv",
+                "-a"
+            ]
+        },
+        {
+            "type": "java",
+            "request": "launch",
+            "name": "Launch Cs214Project PA3",
+            "mainClass": "Cs214Project",
+            "projectName": "CSU_CS214_Project",
+            "args": [
+                "database/files/file3_pa3.csv",
+                "OutputPA3.csv",
+                "-u"
+            ]
+        },
+        {
+            "type": "java",
+            "request": "launch",
+            "name": "Launch Cs214Project PA4",
+            "mainClass": "Cs214Project",
+            "projectName": "CSU_CS214_Project",
+            "args": [
+                "database/files/PA4_file3.csv",
+                "OutputPA4.csv",
+                "-p"
+            ]
+        },
+        {
+            "type": "java",
+            "request": "launch",
+            "name": "Launch Cs214Project PA5",
+            "mainClass": "Cs214Project",
+            "projectName": "CSU_CS214_Project",
             "args": [
                 "database/files/file3_PA5.csv",
-                "OutputTEST.csv",
+                "OutputPA5.csv",
                 "-r",
-                // "song8",
-                // "song1"
                 "song3",
                 "song5",
                 "song6"
             ]
         },
-        // {
-        //     "type": "java",
-        //     "name": "Debug Main",
-        //     "request": "launch",
-        //     "mainClass": "Cs214Project.java"
-        // },
         {
-            "type": "jdk",
+            "type": "java",
             "request": "launch",
-            "name": "Launch Java App"
-        },
-        {
-            "name": "Launch Java: Continuous Mode",
-            "type": "jdk",
-            "request": "launch",
-            "launchConfiguration": "Continuous Mode"
+            "name": "Launch Cs214Project PA5 (Large Dataset)",
+            "mainClass": "Cs214Project",
+            "projectName": "CSU_CS214_Project",
+            "args": [
+                "database/files/large_dataset.csv",
+                "OutputPA5Large.csv",
+                "-r",
+                "song8",
+                "song1"
+            ]
         }
     ]
 }

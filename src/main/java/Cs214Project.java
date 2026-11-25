@@ -120,9 +120,9 @@ public class Cs214Project {
             // SongUserServicePA4.outputUsersSongsRatingsCSV(output);
             // }
             case "-p" -> {
-                SongUserServicePA4 SongUserServicePA4 = new SongUserServicePA4();
-                SongUserServicePA4.loadAndProcessDataPrediction(input);
-                SongUserServicePA4.outputUsersSongsRatingPredictionsCSV(output);
+                SongUserServicePA4V2 SongUserServicePA4V2 = new SongUserServicePA4V2();
+                SongUserServicePA4V2.loadAndProcessDataPrediction(input, true);
+                SongUserServicePA4V2.outputUsersSongsRatingPredictionsCSV(output);
             }
             case "-r" -> {
                 String[] userSongSelection = new String[args.length - 3];
