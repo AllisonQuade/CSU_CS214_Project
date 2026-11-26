@@ -244,4 +244,100 @@ public class service_UserSongCSVDataLoad {
         }
         return invalidUser;
     }
+
+    public void assertLoadedSongListContainsSongs(String[] selectedSongNames) {
+        for (String userChoice : selectedSongNames) {
+            if (!this.songList.containsKey(userChoice)) {
+                throw new IllegalArgumentException("userChoice song must exist in input file.");
+            }
+        }
+    }
+
+    public void replaceNaNWithWeightedAverageRating() throws IOException {
+        // update NaN ratings with weighted average ratings
+        for (Map.Entry<String, data_User> aUserEntry : this.getUserList().entrySet()) {
+            TreeMap<String, Double> userSongList = aUserEntry.getValue().getSongList();
+
+            for (Map.Entry<String, Double> aSongEntry : userSongList.entrySet()) {
+                if (aSongEntry.getValue().isNaN()) { // if predicted rating NaN, calculate weighted average
+                    Double unpredicted = calculateWeightedAverage(aUserEntry.getValue(),
+                            this.getSongList().get(aSongEntry.getKey()));
+
+                    aSongEntry.setValue(unpredicted);
+                }
+            }
+        }
+    }
+
+     public Double calculateWeightedAverage(data_User user, data_Song song) {
+        double songMean = song.getRunningMean();
+        double userMean = user.getRunningMean();
+        int numSongRatings = song.getRatingsCount();
+        int numUserRatings = user.getSongRatingCount();
+
+        double unpredicted = Math
+                .round((songMean * numSongRatings + userMean * numUserRatings) / (numSongRatings + numUserRatings));
+        return unpredicted;
+    }
+
+    
+    public void populateSongListRatingsFromUserSongList() {
+        for (Map.Entry<String, data_User> userEntry : this.getUserList().entrySet()) {
+            TreeMap<String, Double> songList = userEntry.getValue().getSongList();
+            for (Map.Entry<String, Double> songUserListEntry : songList.entrySet()) {
+                ArrayList<Double> predictedRatings = this.getSongList().get(songUserListEntry.getKey())
+                        .getSongEnrichedRatings();
+                predictedRatings.add(songUserListEntry.getValue());
+            }
+
+        }
+    }
+
+      public void removeOneDistinctRating() {
+        ArrayList<String> removeSongs = new ArrayList<>();
+        for (Map.Entry<String, data_Song> songListEntry : this.getSongList().entrySet()) {
+            Set<Double> tempSet = new TreeSet<>(songListEntry.getValue().getSongEnrichedRatings());
+            if (tempSet.size() == 1) {
+                // this song has same rating across all users, remove from user songList
+                for (Map.Entry<String, data_User> userListEntry : this.getUserList().entrySet()) {
+                    userListEntry.getValue().getSongList().remove(songListEntry.getKey());
+                    removeSongs.add(songListEntry.getKey());
+                }
+            }
+        }
+        for (String song : removeSongs) {
+            this.getSongList().remove(song);
+        }
+    }
+
+    public void updateRunningMeanStandardDeviation() {
+        for (Map.Entry<String, data_Song> songEntry : this.getSongList().entrySet()) {
+            songEntry.getValue().calculateRunningMeanAndStandardDeviation(
+                    new ArrayList<>(songEntry.getValue().getSongEnrichedRatings()));
+        }
+    }
+
+    public void assertLoadedSongListContainsEnoughSongs(String[] userSongNamesSelection) {
+        if (this.getSongList().size() < (userSongNamesSelection.length + 1)) {
+            throw new IllegalArgumentException("Number of songs in the dataset is less than user choice size + 1");
+        }
+    }
+
+    // Updating songList ArrayList<Double> normalizedRating with all song ratings
+    // normalized rating
+    public void normalizeRatingWithSongs() throws IOException {
+        for (Map.Entry<String, data_Song> songEntry : this.getSongList().entrySet()) {
+            data_Song song = songEntry.getValue();
+            song.getNormalizedRatings().clear();
+
+            for (Map.Entry<String, data_User> userEntry : this.getUserList().entrySet()) {
+                Double rating = userEntry.getValue().getSongList().get(songEntry.getKey());
+                if (rating == null || rating.isNaN()) {
+                    rating = 0.0;
+                }
+                song.addNormalizedRatings(song.getSongNormalizedRating(rating));
+            }
+        }
+    }
+
 }

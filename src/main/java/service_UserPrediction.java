@@ -11,10 +11,11 @@ public class service_UserPrediction {
     /**
      * Predict a target user's empty rating based on the most similar users rating
      */
-    public void predictMissingUserSongRating(boolean dontAllowEmptyUserSongPredictionRatings, TreeMap<data_User, TreeMap<Double, data_User>> similarUserList) {
+    public void predictMissingUserSongRating(boolean dontAllowEmptyUserSongPredictionRatings,
+            TreeMap<data_User, TreeMap<Double, data_User>> similarUserList) {
 
         this.userSongRatingPredictions = new TreeMap<>();
-        
+
         // targetUser: User that is missing rating data.
         // otherUser: user that is the closest in similarity to targetUser.
 
@@ -73,5 +74,19 @@ public class service_UserPrediction {
         }
 
         return predictedRating;
+    }
+
+    public void populateMissingRatingsWithPredictions(TreeMap<String, data_User> userList) {
+        // Update user predicted ratings
+        for (Map.Entry<String, Double> userPredictedEntry : this.getUserSongRatingPredictions()
+                .entrySet()) {
+            // go through each predicted rating, update actual user rating with predicted
+            Double predictedRating = userPredictedEntry.getValue();
+            String[] keys = userPredictedEntry.getKey().split(",");
+            userList.get(keys[1]).getSongList().put(keys[0], predictedRating);
+
+            // this.songList.get(keys[0]).addPredictedRating(predictedRating); // WRONG, is
+            // adding rating then predicted
+        }
     }
 }
