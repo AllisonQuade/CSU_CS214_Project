@@ -4,7 +4,7 @@ import java.util.TreeMap;
  * 
  * Cs214User
  */
-public class Cs214User extends util_CalculateMeanSDNR implements Comparable<Cs214User> { // comparable used to sort by
+public class data_User extends util_CalculateMeanSDNR implements Comparable<data_User> { // comparable used to sort by
                                                                                          // name
 
     private String userName;
@@ -12,7 +12,7 @@ public class Cs214User extends util_CalculateMeanSDNR implements Comparable<Cs21
     private final TreeMap<String, Double> songList = new TreeMap<>();
     int songRatingCount = 0;
 
-    public Cs214User(String newUserName) {
+    public data_User(String newUserName) {
         if (util_FormatOutput.isNullOrEmpty(newUserName)) {
             throw new IllegalArgumentException("The prarameter \"newUserName\" is required.");
         }
@@ -20,7 +20,7 @@ public class Cs214User extends util_CalculateMeanSDNR implements Comparable<Cs21
     }
 
     @Override // take in Cs214User, returns compared username
-    public int compareTo(Cs214User other) {
+    public int compareTo(data_User other) {
         return this.userName.compareTo(other.userName);
     }
 
@@ -32,7 +32,7 @@ public class Cs214User extends util_CalculateMeanSDNR implements Comparable<Cs21
         return this.userName;
     }
 
-    public int getuserCount() {
+    public int getUserCount() {
         return this.userCount;
     }
 

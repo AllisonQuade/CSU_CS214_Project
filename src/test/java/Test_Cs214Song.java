@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 public class Test_Cs214Song {
     @Test
     public void test_ConstructorSuccess() {
-        Cs214Song song = new Cs214Song("MySong");
-        assertEquals(Cs214Song.class, song.getClass(),
+        data_Song song = new data_Song("MySong");
+        assertEquals(data_Song.class, song.getClass(),
                 "test_ConstructorSuccess did not return expected exception.");
     }
 
@@ -17,14 +17,14 @@ public class Test_Cs214Song {
     public void Test_EmptySongNameInConstructor() {
         IllegalArgumentException e = assertThrows(
                 IllegalArgumentException.class,
-                () -> new Cs214Song(""), "Test_EmptySongNameInConstructor did not return expected exception.");
+                () -> new data_Song(""), "Test_EmptySongNameInConstructor did not return expected exception.");
 
         util_FormatOutput.printError(e.getMessage());
     }
 
     @Test
     public void Test_EmptySongNameInSetter() {
-        Cs214Song song = new Cs214Song("Hello");
+        data_Song song = new data_Song("Hello");
 
         IllegalArgumentException e = assertThrows(
                 IllegalArgumentException.class,
@@ -34,19 +34,12 @@ public class Test_Cs214Song {
     }
 
     @Test
-    public void test_NegativeNumberSongsCounted() {
-        IllegalArgumentException e = assertThrows(
-                IllegalArgumentException.class,
-                () -> new Cs214Song("Hello").setNumberSongsOccured(-1),
-                "test_NegativeNumberSongsCounted did not return expected exception.");
-
-        util_FormatOutput.printError(e.getMessage());
-    }
-
-    @Test
-    public void test_NumberSongsCountedSuccess() throws IOException{
-         Cs214Song song = new Cs214Song("MySong");
-        song.setNumberSongsOccured(4);
+    public void test_NumberSongsCountedSuccess() throws IOException {
+        data_Song song = new data_Song("MySong");
+        song.addRating(3.0);
+        song.addRating(5.0);
+        song.addRating(1.0);
+        song.addRating(2.0);
         assertEquals(4, song.getNumberSongsOccured(),
                 "test_NumberSongsCountedSuccess did not return expected exception.");
     }
@@ -56,7 +49,7 @@ public class Test_Cs214Song {
 
         IllegalArgumentException e = assertThrows(
                 IllegalArgumentException.class,
-                () -> new Cs214Song("MySong").addRating(6.0),
+                () -> new data_Song("MySong").addRating(6.0),
                 "test_RatingOOBPositive did not return expected exception.");
 
         util_FormatOutput.printError(e.getMessage());
@@ -66,7 +59,7 @@ public class Test_Cs214Song {
     public void test_RatingOOBZero() {
         IllegalArgumentException e = assertThrows(
                 IllegalArgumentException.class,
-                () -> new Cs214Song("MySong").addRating(0.0),
+                () -> new data_Song("MySong").addRating(0.0),
                 "test_RatingOOBZero did not return expected exception.");
 
         util_FormatOutput.printError(e.getMessage());
@@ -76,7 +69,7 @@ public class Test_Cs214Song {
     public void test_RatingOOBNegative() {
         IllegalArgumentException e = assertThrows(
                 IllegalArgumentException.class,
-                () -> new Cs214Song("MySong").addRating(-1.0),
+                () -> new data_Song("MySong").addRating(-1.0),
                 "test_RatingOOBNegative did not return expected exception.");
 
         util_FormatOutput.printError(e.getMessage());
@@ -84,14 +77,14 @@ public class Test_Cs214Song {
 
     @Test
     public void test_RatingSuccess() throws IOException {
-        Cs214Song song = new Cs214Song("MySong");
+        data_Song song = new data_Song("MySong");
         song.addRating(3.0);
         assertEquals(3.0, song.getRatings().getFirst(), "test_RatingSuccess did not return expected exception.");
     }
 
     @Test
     public void test_RunningMeanSuccess() throws IOException {
-        Cs214Song song = new Cs214Song("MySong");
+        data_Song song = new data_Song("MySong");
         song.addRating(1.0);
         song.addRating(2.0);
         song.addRating(3.0);
@@ -101,7 +94,7 @@ public class Test_Cs214Song {
 
     @Test
     public void test_StandardDeviationSuccess() throws IOException {
-        Cs214Song song = new Cs214Song("MySong");
+        data_Song song = new data_Song("MySong");
         song.addRating(1.0);
         song.addRating(2.0);
         song.addRating(3.0);
@@ -112,7 +105,7 @@ public class Test_Cs214Song {
 
     @Test
     public void test_RatingsCountSuccess() throws IOException {
-        Cs214Song song = new Cs214Song("MySong");
+        data_Song song = new data_Song("MySong");
         song.addRating(1.0);
         song.addRating(2.0);
         song.addRating(3.0);
@@ -123,16 +116,15 @@ public class Test_Cs214Song {
 
     @Test
     public void test_GetSongNameSuccess() {
-        Cs214Song song = new Cs214Song("MySong");
+        data_Song song = new data_Song("MySong");
         assertEquals("MySong", song.getSongName(),
                 "test_GetSongNameSuccess did not return expected exception.");
     }
 
-    
-     @Test
-    public void test_NumberSongsOccuredSuccess() {
-        Cs214Song song = new Cs214Song("MySong");
-        song.incrementsSongCount();
+    @Test
+    public void test_NumberSongsOccuredSuccess() throws IOException {
+        data_Song song = new data_Song("MySong");
+        song.addRating(2.0);
         assertEquals(1, song.getNumberSongsOccured(),
                 "test_NumberSongsOccuredSuccess did not return expected exception.");
     }

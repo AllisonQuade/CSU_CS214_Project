@@ -11,27 +11,29 @@ import org.apache.commons.csv.CSVPrinter;
  * 
  * CSVPrinterService
  */
-public class CSVPrinterService {
+public class service_CSVPrinter {
 
     private Writer writer = null;
     private CSVPrinter printer = null;
 
     /**
      * Constructor that sets output file and no headers.
-     * @param outputFile Output path file. 
+     * 
+     * @param outputFile Output path file.
      * @throws IOException If invalid output file.
      */
-    public CSVPrinterService(String outputFile) throws IOException { // No headers constructor
+    public service_CSVPrinter(String outputFile) throws IOException { // No headers constructor
         this(outputFile, null); // null disables header
     }
 
     /**
      * Consturctor with output file and set headers.
+     * 
      * @param outputFile Output file CSV path.
-     * @param headers Given string array of headers for output.
+     * @param headers    Given string array of headers for output.
      * @throws IOException If FileWriter or CSVPrinter fails.
      */
-    public CSVPrinterService(String outputFile, String[] headers) throws IOException {
+    public service_CSVPrinter(String outputFile, String[] headers) throws IOException {
         validateOutputFileName(outputFile);
         validateOutputFolder(outputFile);
         validateCsvExtension(outputFile);
@@ -44,6 +46,7 @@ public class CSVPrinterService {
 
     /**
      * Validates that an output file is required.
+     * 
      * @param outputFile Output CSV file path.
      */
     private static void validateOutputFileName(String outputFile) {
@@ -54,10 +57,12 @@ public class CSVPrinterService {
 
     /**
      * Validates valid output path.
+     * 
      * @param outputFile Output CSV file path.
      */
     private static void validateOutputFolder(String outputFile) {
-        // e.g. "database/files/testfiles/outputfiles/test_OutputContainsBackSlashSuccess.csv"
+        // e.g.
+        // "database/files/testfiles/outputfiles/test_OutputContainsBackSlashSuccess.csv"
         String directoryPath = new File(outputFile).getParent();
 
         if (directoryPath != null) {
@@ -71,6 +76,7 @@ public class CSVPrinterService {
 
     /**
      * Validates that output path is written as a CSV.
+     * 
      * @param outputFile Output CSV file path.
      */
     private static void validateCsvExtension(String outputFile) {
@@ -81,6 +87,7 @@ public class CSVPrinterService {
 
     /**
      * Builds output format.
+     * 
      * @param headers Given headers.
      * @return CSV Format
      */
@@ -92,6 +99,7 @@ public class CSVPrinterService {
 
     /**
      * Prints data.
+     * 
      * @param record Row of data
      * @throws IOException If parameter record is null.
      */
@@ -105,6 +113,7 @@ public class CSVPrinterService {
 
     /**
      * Closes CSV file.
+     * 
      * @throws IOException If wrtier or printer failed to close.
      */
     public void closeCSVFile() throws IOException {

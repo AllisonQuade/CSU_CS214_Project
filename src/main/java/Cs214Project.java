@@ -2,6 +2,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.TreeMap;
 
 // ******************************************************************
 // ******************************************************************
@@ -104,7 +105,7 @@ public class Cs214Project {
                 // PA2 PA service factory
 
                 SongUserServicePA2 SongUserServicePA2 = new SongUserServicePA2();
-                SongUserServicePA2.loadAndProcessData(input);
+                SongUserServicePA2.loadAndProcessFileData(input);
                 SongUserServicePA2.outputUsersSongsRatingsCSV(output);
             }
             case "-u" -> {
@@ -134,11 +135,22 @@ public class Cs214Project {
                 SongUserServicePA5.loadAndProcessDataUserClustering(input, userSongSelection);
                 SongUserServicePA5.outputUserChoiceRecommendations(output);
             }
+            case "-s" -> {
+                String[] userSongSelection = new String[args.length - 3];
+
+                // https://www.geeksforgeeks.org/java/arrays-copyof-in-java-with-examples/
+                System.arraycopy(args, 3, userSongSelection, 0, args.length - 3); // copy args to userSongSelection
+
+                SongUserServicePA6 SongUserServicePA6 = new SongUserServicePA6();
+                // SongUserServicePA6.loadAndProcessDataUserClustering(input,
+                // userSongSelection);
+                // SongUserServicePA6.outputUserChoiceRecommendations(output);
+            }
             default -> {
                 // PA1
                 SongUserServicePA1 SongUserServicePA1 = new SongUserServicePA1();
-                LoadSongsandUsersFromCSV_Result songsAndUsers = SongUserServicePA1.loadSongsandUsersFromCSV(input);
-                SongUserServicePA1.outputUsersSongsRatingsCSV(output, songsAndUsers.songList);
+                TreeMap<String, data_Song> songList = SongUserServicePA1.loadSongsandUsersFromCSV(input);
+                SongUserServicePA1.outputUsersSongsRatingsCSV(output, songList);
             }
         }
     }

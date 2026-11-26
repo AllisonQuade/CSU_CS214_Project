@@ -9,17 +9,68 @@ import java.util.TreeSet;
 
 import org.apache.commons.csv.CSVRecord;
 
-public class SongUserFileService {
-    public TreeMap<String, Cs214Song> songList = new TreeMap<>();
-    public TreeMap<String, Cs214User> userList = new TreeMap<>();
+public class service_UserSongCSVDataLoad {
+    public TreeMap<String, data_Song> songList = new TreeMap<>();
+    public TreeMap<String, data_User> userList = new TreeMap<>();
     public List<String> masterSongNameList = new ArrayList<>();
 
-    public TreeMap<String, Cs214User> getUserList() {
-        return userList;
+    public List<String> getMasterSongNameList() {
+        return this.masterSongNameList;
     }
 
-    public TreeMap<String, Cs214Song> getSongList() {
-        return songList;
+    service_SongSimilarity songSimilarityService;
+
+    public TreeMap<String, data_User> getUserList() {
+        return this.userList;
+    }
+
+    public TreeMap<String, data_Song> getSongList() {
+        return this.songList;
+    }
+
+    // PA1
+    public void loadFileData(String inputFile) throws IOException {
+        if (util_FormatOutput.isNullOrEmpty(inputFile)) {
+            throw new IllegalArgumentException(
+                    "Input file is required and must contain a file path and file name.");
+        }
+        service_CSVParseFile parserService = new service_CSVParseFile(inputFile,
+                false);
+        loadSongsandUsersFromCSV(parserService);
+    }
+
+    // PA2
+    public void loadAndCleanFileData(String inputFile) throws IOException {
+        loadFileData(inputFile);
+        dataCleaner();
+    }
+
+    // PA3
+    public void loadAndCleanAndProcessFileData(String inputFile) throws IOException {
+        loadAndCleanFileData(inputFile);
+        populateRatingPlaceHolderData();
+    }
+
+    // PA1
+    public void loadStringData(String inputData) throws IOException {
+        if (util_FormatOutput.isNullOrEmpty(inputData)) {
+            throw new IllegalArgumentException("inputData parameter is required.");
+        }
+        service_CSVParseString parserService = new service_CSVParseString(inputData,
+                false);
+        loadSongsandUsersFromCSV(parserService);
+    }
+
+    // PA2
+    public void loadAndCleanStringData(String inputData) throws IOException {
+        loadStringData(inputData);
+        dataCleaner();
+    }
+
+    // PA3
+    public void loadAndCleanAndProcessStringData(String inputData) throws IOException {
+        loadAndCleanStringData(inputData);
+        populateRatingPlaceHolderData();
     }
 
     /**
@@ -29,28 +80,21 @@ public class SongUserFileService {
      * @return song list and user list.
      * @throws IOException If input file null or empty.
      */
-    public LoadSongsandUsersFromCSV_Result loadSongsandUsersFromCSV(String inputFile) throws IOException {
-
-        if (util_FormatOutput.isNullOrEmpty(inputFile)) {
-            throw new IllegalArgumentException(
-                    "Input file is required and must contain a file path and file name.");
-        }
+    private void loadSongsandUsersFromCSV(interface_CSVParser parserService) throws IOException {
 
         this.songList = new TreeMap<>();
         this.userList = new TreeMap<>();
-        // this.userRatingList = new ArrayList<>();
 
         this.masterSongNameList = new ArrayList<>();
 
-        CSVParserService parserService = new CSVParserService(inputFile, false);
         for (CSVRecord record : parserService.getParser()) {
             if (record.size() != 3) {
                 throw new IllegalArgumentException("Expected 3 fields but got " + record.size()
                         + " at record number " + record.getRecordNumber());
             }
 
-            String songName = record.get(0); // Gets Song
-            String userName = record.get(1); // Gets User
+            String songName = record.get(0); // Gets Song name from CSV
+            String userName = record.get(1); // Gets User name from CSV
             double rating = Integer.parseInt(record.get(2));
 
             if (!masterSongNameList.contains(songName)) {
@@ -61,16 +105,10 @@ public class SongUserFileService {
 
             processUserData(songName, userName, rating);
 
-            Collections.sort(masterSongNameList); // sorts final master list
+            Collections.sort(masterSongNameList);
         }
 
-        // if (!parserService.equals(null)) { // handles the parserService object to
-        // make sure it was created successfully
         parserService.closeCSVFile();
-        // }
-
-        return new LoadSongsandUsersFromCSV_Result(songList, userList);
-
     }
 
     /**
@@ -81,13 +119,13 @@ public class SongUserFileService {
      * @param rating   Numeric rating of users song.
      */
     public void processUserData(String songName, String userName, double rating) {
-        Cs214User currentUser;
+        data_User currentUser;
         // If the user list already contains that user grab the user
         if (userList.containsKey(userName)) {
             currentUser = userList.get(userName);
         } // Otherwise add user
         else {
-            currentUser = new Cs214User(userName);
+            currentUser = new data_User(userName);
 
             userList.put(userName, currentUser);
         }
@@ -106,17 +144,15 @@ public class SongUserFileService {
      * @param rating   Numeric rating of users song.
      */
     public void processSongData(String songName, double rating) throws IOException {
-        Cs214Song currentSong;
+        data_Song currentSong;
         // If the song list already contains that song grab the song
         if (songList.containsKey(songName)) {
             currentSong = songList.get(songName);
         } // Otherwise add song
         else {
-            currentSong = new Cs214Song(songName);
+            currentSong = new data_Song(songName);
             songList.put(songName, currentSong);
         }
-
-        currentSong.incrementsSongCount();
         currentSong.addRating(rating);
     }
 
@@ -127,22 +163,21 @@ public class SongUserFileService {
      * 
      * @throws IOException If unable to clean data.
      */
-    public void dataCleaner() throws IOException {
+    private void dataCleaner() throws IOException {
         List<String> invalidUsers = new ArrayList<>();
 
         Set<String> validUserSongs = new TreeSet<>();
         Set<String> invalidUserSongs = new TreeSet<>();
 
-        for (Map.Entry<String, Cs214User> userEntry : this.userList.entrySet()) { // stepthrough users
+        for (Map.Entry<String, data_User> userEntry : this.userList.entrySet()) { // stepthrough users
             TreeMap<String, Double> songNameRating = userEntry.getValue().getSongList();
 
             // this list keeps track of song names for current user
             Set<String> currentUserSongs = new TreeSet<>();
 
             Double firstRating = songNameRating.firstEntry().getValue(); // the first rating in the treeMap
-            Boolean invalidUser = true;
 
-            invalidUser = isInvalidUser(songNameRating, currentUserSongs, firstRating, invalidUser);
+            Boolean invalidUser = isInvalidUser(songNameRating, currentUserSongs, firstRating);
 
             if (invalidUser) { // invalid user
                 invalidUserSongs.addAll(currentUserSongs); // merge all user songs into invalid user songs list
@@ -158,14 +193,16 @@ public class SongUserFileService {
         for (String user : invalidUsers) {
             userList.remove(user);
         }
+
+        validateCooperativeUsers();
     }
 
     /**
      * Puts missing song from user into song list with NaN.
      */
-    public void populateRatingPlaceHolderData() { // puts missing song from user into songList with NaN
+    private void populateRatingPlaceHolderData() { // puts missing song from user into songList with NaN
         for (String currentSongName : this.masterSongNameList) {
-            for (Map.Entry<String, Cs214User> userEntry : this.userList.entrySet()) {
+            for (Map.Entry<String, data_User> userEntry : this.userList.entrySet()) {
                 TreeMap<String, Double> songNameRating = userEntry.getValue().getSongList();
                 if (!songNameRating.containsKey(currentSongName)) {
                     songNameRating.put(currentSongName, Double.NaN);
@@ -193,8 +230,8 @@ public class SongUserFileService {
      * @return true if invalid user, false if valid.
      */
     private Boolean isInvalidUser(TreeMap<String, Double> songNameRating, Set<String> currentUserSongs,
-            Double firstRating,
-            Boolean invalidUser) {
+            Double firstRating) {
+        Boolean invalidUser = true;
         for (Map.Entry<String, Double> songEntry : songNameRating.entrySet()) { // stepthrough user's songs and
             // ratings
             currentUserSongs.add(songEntry.getKey()); // list of all my current user songs

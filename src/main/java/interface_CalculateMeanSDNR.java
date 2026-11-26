@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public interface util_InterfaceCalculateMeanSDNR {
+public interface interface_CalculateMeanSDNR {
     /**
      * default constructor
      */

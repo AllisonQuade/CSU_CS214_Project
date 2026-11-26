@@ -1,5 +1,4 @@
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -14,7 +13,7 @@ public class Test_PrinterService {
     public void test_OutputParameterNull() {
         IllegalArgumentException e = assertThrows(
                 IllegalArgumentException.class,
-                () -> new CSVPrinterService(null), "test_OutputNull did not return expected exception.");
+                () -> new service_CSVPrinter(null), "test_OutputNull did not return expected exception.");
 
         util_FormatOutput.printError(e.getMessage());
     }
@@ -23,7 +22,7 @@ public class Test_PrinterService {
     public void test_OutputParameterEmpty() {
         IllegalArgumentException e = assertThrows(
                 IllegalArgumentException.class,
-                () -> new CSVPrinterService(""), "test_OutputNull did not return expected exception.");
+                () -> new service_CSVPrinter(""), "test_OutputNull did not return expected exception.");
 
         util_FormatOutput.printError(e.getMessage());
     }
@@ -38,23 +37,22 @@ public class Test_PrinterService {
             file.delete();
         }
 
-        CSVPrinterService printerService = new CSVPrinterService(outputFileName, new String[]{"a","b","c","d"});
+        service_CSVPrinter printerService = new service_CSVPrinter(outputFileName, new String[] { "a", "b", "c", "d" });
 
-        printerService.printRecord(new Object[] {"song1", "rating1", 1, 2 });
-        printerService.printRecord(new Object[] {"song2", "rating2", 2, 3 });
-        printerService.printRecord(new Object[] {"song3", "rating3", 3, 4 });
+        printerService.printRecord(new Object[] { "song1", "rating1", 1, 2 });
+        printerService.printRecord(new Object[] { "song2", "rating2", 2, 3 });
+        printerService.printRecord(new Object[] { "song3", "rating3", 3, 4 });
 
         assertEquals(true, file.exists(),
                 "test_OutputContainsBackSlashSuccess did not return expected exception.");
     }
 
-
     @Test
     public void test_OutputFolderNotFound() throws IOException {
         String outputFileName = "database/files/testfilesXXX/outputfiles/test_OutputContainsBackSlashSuccess.csv";
-       IllegalArgumentException e = assertThrows(
+        IllegalArgumentException e = assertThrows(
                 IllegalArgumentException.class,
-                () -> new CSVPrinterService(outputFileName),
+                () -> new service_CSVPrinter(outputFileName),
                 "test_OutputFolderNotFound did not return expected exception.");
 
         util_FormatOutput.printError(e.getMessage());
@@ -64,7 +62,7 @@ public class Test_PrinterService {
     public void test_OutputNonCSV() {
         IllegalStateException e = assertThrows(
                 IllegalStateException.class,
-                () -> new CSVPrinterService("nonoutput.txt"),
+                () -> new service_CSVPrinter("nonoutput.txt"),
                 "test_OutputNonCSV did not return expected exception.");
 
         util_FormatOutput.printError(e.getMessage());
@@ -74,11 +72,10 @@ public class Test_PrinterService {
     public void test_NullRecordParameter() {
         IllegalArgumentException e = assertThrows(
                 IllegalArgumentException.class,
-                () -> new CSVPrinterService("file1.csv").printRecord(null),
+                () -> new service_CSVPrinter("file1.csv").printRecord(null),
                 "test_NullValueParameter did not return expected exception.");
 
         util_FormatOutput.printError(e.getMessage());
     }
-
 
 }

@@ -5,15 +5,14 @@ import java.util.ArrayList;
  * 
  * Cs214Song
  */
-public class Cs214Song extends util_CalculateMeanSDNR {
+public class data_Song extends util_CalculateMeanSDNR {
   private String songName; // stores name of song
-  private int songCount = 0;
   private final ArrayList<Double> ratings = new ArrayList<>(); // Puts rating of this song/user into an arraylist
   private final ArrayList<Double> normalizedRatings = new ArrayList<>();
   private ArrayList<Double> songEnrichedRatings = new ArrayList<>();
 
   @SuppressWarnings("OverridableMethodCallInConstructor")
-  public Cs214Song(String newSongName) { // garuntees a song name
+  public data_Song(String newSongName) { // garuntees a song name
     this.setSongName(newSongName);
   }
 
@@ -29,21 +28,8 @@ public class Cs214Song extends util_CalculateMeanSDNR {
     return this.songName;
   }
 
-  // you can also create a method to increment numberSongsOccured instead of using
-  // setters and getters
-  public void incrementsSongCount() { // increments song counter by 1
-    this.songCount++;
-  }
-
   public int getNumberSongsOccured() {
-    return this.songCount;
-  }
-
-  public void setNumberSongsOccured(int newNumberSongsOccured) throws IOException {
-    if (newNumberSongsOccured < 0) {
-      throw new IllegalArgumentException("Number of Songs Occured can't be less than 0.");
-    }
-    this.songCount = newNumberSongsOccured;
+    return this.ratings.size();
   }
 
   public int getRatingsCount() {

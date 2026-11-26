@@ -16,3 +16,48 @@ EX: gradle test --tests Test_Math
 Run individual method from test class:
 gradle test --tests <ClassName>.<MethodName>
 gradle test --tests Test_main.test_mainPA1_success
+
+
+PA File Runs:
+PA1: gradle run --args="'database/files/file1.csv' 'song_stats.csv'"
+Output:
+song,number of ratings,mean,standard deviation
+song1,4,3.25,1.0897247358851685
+song2,4,4.0,1.224744871391589
+
+
+PA2: gradle run --args="'database/files/file4_pa2.csv' 'user_analysis.csv' '-a'"
+Output:
+username,song,rating
+alex,All Star,3
+alex,Bohemian Rhapsody,NaN
+alex,Sweet Home Alabama,4
+charlie,All Star,2
+charlie,Bohemian Rhapsody,4
+charlie,Sweet Home Alabama,3
+
+
+PA3:  gradle run --args="'database/files/file2.csv' 'song_similarities.csv' '-u'"
+Output:
+name1,name2,similarity
+Big Girls Don't Cry,I Gotta Feeling,2.0847431127488694
+Big Girls Don't Cry,Suit & Tie,1.765045216243656
+I Gotta Feeling,Suit & Tie,2.353393621658208
+
+
+PA4: gradle run -q --args="'database/files/file4.csv' 'user_predictions.csv' '-p'"
+Output: 
+song,user,predicted rating
+All Star,charlie,4
+Bohemian Rhapsody,alex,2
+Sweet Home Alabama,alex,3
+We Will Rock You,cameron,1
+We Will Rock You,charlie,NaN
+
+
+PA5: gradle run -q --args="'database/files/file3_PA5.csv' 'output.csv' '-r' 'song3' 'song5' 'song6'"
+Output:
+user choice,recommendation
+song3,song4
+song6,song1
+song6,song2

@@ -6,11 +6,11 @@ import java.util.ArrayList;
  * util_CalculateMeanSDNR
  * Abstract class
  */
-public abstract class util_CalculateMeanSDNR implements util_InterfaceCalculateMeanSDNR{
+public abstract class util_CalculateMeanSDNR implements interface_CalculateMeanSDNR {
 
     private double runningMean = 0.0;
     private double standardDeviation = 0.0;
-    //private ArrayList<Double> ratings = new ArrayList<>();
+    // private ArrayList<Double> ratings = new ArrayList<>();
 
     private int count = 0;
     private double difference = 0.0;
@@ -26,6 +26,7 @@ public abstract class util_CalculateMeanSDNR implements util_InterfaceCalculateM
 
     /**
      * Calculate running mean and standard deviation for current user
+     * 
      * @param ratings Ratings array list used for calculations.
      */
     public void calculateRunningMeanAndStandardDeviation(ArrayList<Double> ratings) {
@@ -33,7 +34,7 @@ public abstract class util_CalculateMeanSDNR implements util_InterfaceCalculateM
             throw new IllegalArgumentException("The parameter \"ratings\" is required.");
         }
 
-        //reset values
+        // reset values
         runningMean = 0.0;
         standardDeviation = 0.0;
         count = 0;
@@ -73,7 +74,9 @@ public abstract class util_CalculateMeanSDNR implements util_InterfaceCalculateM
     }
 
     /**
-     * Calculates normalized rating using rating, running mean, and standard deviation.
+     * Calculates normalized rating using rating, running mean, and standard
+     * deviation.
+     * 
      * @param rating Rating of song used for calculation.
      * @return Normalized rating.
      */

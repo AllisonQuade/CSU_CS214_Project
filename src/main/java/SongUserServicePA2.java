@@ -1,13 +1,6 @@
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
-
-import org.apache.commons.csv.CSVRecord;
 //DLLs ^
 
 /**
@@ -15,202 +8,38 @@ import org.apache.commons.csv.CSVRecord;
  * SongUserServicePA2
  */
 public class SongUserServicePA2 {
+    service_UserSongCSVDataLoad fileService;
     // https://www.geeksforgeeks.org/java/sorting-hashmap-according-key-value-java/
     // use object to return song and users so you don't have to read file multiple
     // times
 
-    private TreeMap<String, TreeMap<String, Double>> users;
-    //private TreeMap<String, TreeMap<String, TreeMap<String, Double>>> updatedUsers;
-    private List<String> masterSongNameList; // master = I have everything (all unique song names)
-
-    /**
-     * deafult constructor
-     */
-    // public SongUserServicePA2(){
-    // }
-
     /**
      * Calls methods to load data and clean data.
+     * 
      * @param inputFile Input CSV file path.
      * @throws IOException If load songs and users from csv fails.
      */
-    public void loadAndProcessData(String inputFile) throws IOException{
-        loadSongsandUsersKeysFromCSV(inputFile);
-        dataCleaner();
+    public void loadAndProcessFileData(String inputFile) throws IOException {
+        fileService = new service_UserSongCSVDataLoad();
+        fileService.loadAndCleanFileData(inputFile);
     }
 
     /**
-     * Get user nested tree map.
-     * @return User map.
-     */
-    public TreeMap<String, TreeMap<String, Double>> getUsers() {
-        return this.users;
-    }
-
-    /**
-     * Get the song name and corresponding rating for a user.
-     * @param userName Name of user.
-     * @return Map of song name and rating.
-     */
-    public TreeMap<String, Double> getSongRatingsForUserName(String userName) {
-        return users.get(userName);
-    }
-
-
-    /**
-     * Given that the input path is in string format, parse the data. 
+     * Given that the input path is in string format, parse the data.
+     * 
      * @param inputData Input data string.
      * @throws IOException If parser service fails.
      */
-    public void loadSongsandUsersKeysFromDataString(String inputData) throws IOException{
-        if (util_FormatOutput.isNullOrEmpty(inputData)) {
-            throw new IllegalArgumentException("inputData parameter is required.");
-        }
-
-        CSVParserService parserService = new CSVParserService(inputData, CSVParserService.fileOrDataInput.DATASTRING,false);
-
-         proccessData(parserService);
+    public void loadAndProcessStringData(String inputData) throws IOException {
+        fileService = new service_UserSongCSVDataLoad();
+        fileService.loadAndCleanStringData(inputData);
     }
 
     // #region PA2
-    /**
-     * Given that the input path is a CSV file, parse the data.
-     * @param inputFile Input CSV file path.
-     * @throws IOException If parser service fails.
-     */
-    public void loadSongsandUsersKeysFromCSV(String inputFile) throws IOException {
-        if (util_FormatOutput.isNullOrEmpty(inputFile)) {
-            throw new IllegalArgumentException(
-                    "Input file is required and must contain a file path and file name.");
-        }
-
-        CSVParserService parserService = new CSVParserService(inputFile, CSVParserService.fileOrDataInput.FILEPATH, false);
-
-        proccessData(parserService);
-    }
-
-    /**
-     * Populate nested user list with user, song, and rating.
-     * Populate and sort master song list with all unique songs.
-     * @param parserService Used to populate data.
-     * @throws IOException If close parser fails.
-     */
-    private void proccessData(CSVParserService parserService) throws IOException {
-        this.users = new TreeMap<>(); // Nested TreeMap<UserName,
-                                      // TreeMap<SongName, Rating>>
-
-        this.masterSongNameList = new ArrayList<>(); // Keeps a list of ALL songs in dataset
-
-
-        for (CSVRecord record : parserService.getParser()) {
-            if (record.size() != 3) {
-                throw new IllegalArgumentException("Expected 3 fields but got " + record.size()
-                        + " at record number " + record.getRecordNumber());
-            }
-
-            String song = record.get(0); // Gets Song
-            String user = record.get(1); // Gets User
-            double rating = Integer.parseInt(record.get(2)); // Gets Rating
-
-            if (!masterSongNameList.contains(song)) {
-                masterSongNameList.add(song);
-            }
-
-            TreeMap<String, Double> songsRatings;
-            //Song,TreeMap<String,Double> songsProperties
-            //<String, Double> ratingProperties
-            //TreeMap<String, TreeMap<String, Double>> updatedSongRatings;
-
-            if (this.users.containsKey(user)) {
-                // TreeMap<String, TreeMap<String, Double>> usersSongsRatings
-                //new key
-                //new tree
-                //new key hardcode Rating, with value of rating
-                songsRatings = this.users.get(user); // getting value for user key
-                songsRatings.put(song, rating);
-            }
-
-            // Otherwise add user
-            else {
-                songsRatings = new TreeMap<>(); // new treemap needs to be in else so each user has their own
-                                                // treemap
-                songsRatings.put(song, rating); //CHANGE TO: put(song, new TreeMap<String,Double>),
-                //songRatings.put(song, new TreeMap<String,Double> ratingList); 
-                this.users.put(user, songsRatings);
-            }
-        }
-
-        Collections.sort(masterSongNameList); // sorts final master list
-
-        if (parserService != null) { // handles the parserService object to make sure it was created successfully
-            parserService.closeCSVFile();
-        }
-    }
-
-    
-    /**
-     * Removes invalid users from data.
-     * Removes invalid user song from master song lsit if song only belonged to invalid user.
-     */
-    public void dataCleaner() {
-        List<String> invalidUsers = new ArrayList<>();
-
-        // Unique sets list
-        // https://codemia.io/knowledge-hub/path/best_way_to_merge_and_remove_duplicates_from_multiple_lists_in_java
-        Set<String> validUserSongs = new TreeSet<>();
-        Set<String> invalidUserSongs = new TreeSet<>();
-
-        for (Map.Entry<String, TreeMap<String, Double>> userEntry : this.users.entrySet()) { // stepthrough users
-            TreeMap<String, Double> songNameRating = userEntry.getValue();
-
-            // this list keeps track of song names for current user
-            Set<String> currentUserSongs = new TreeSet<>();
-
-            Double firstRating = songNameRating.firstEntry().getValue(); // the first rating in the treeMap
-            Boolean invalidUser = true;
-
-            invalidUser = isInvalidUser(songNameRating, currentUserSongs, firstRating, invalidUser);
-
-            if (invalidUser) { // invalid user
-                invalidUserSongs.addAll(currentUserSongs); // merge all user songs into invalid user songs list
-                invalidUsers.add(userEntry.getKey()); // add current invalid user name to invalidUsers list
-            } else {
-                validUserSongs.addAll(currentUserSongs);
-            }
-        }
-
-        invalidUserSongs.removeAll(validUserSongs);
-        masterSongNameList.removeAll(invalidUserSongs);
-
-        for (String user : invalidUsers) {
-            users.remove(user);
-        }
-    }
-
-    /**
-     * Determines if a user is invalid or valid.
-     * @param songNameRating Used to stepthrough user's songs and ratings.
-     * @param currentUserSongs List of all current user songs.
-     * @param firstRating Users first rating.
-     * @param invalidUser Status if user invalid or valid.
-     * @return true if invalid user, false if valid.
-     */
-    private Boolean isInvalidUser(TreeMap<String, Double> songNameRating, Set<String> currentUserSongs, Double firstRating,
-            Boolean invalidUser) {
-        for (Map.Entry<String, Double> songEntry : songNameRating.entrySet()) {
-            currentUserSongs.add(songEntry.getKey());
-
-            // if(!firstRating.equals(songEntry.getValue())){ //valid user //This if way
-            // works same as if below, gets value of Double and NOT object (memory space)
-            if (firstRating.doubleValue() != songEntry.getValue().doubleValue()) {
-                invalidUser = false;
-            }
-        }
-        return invalidUser;
-    }
 
     /**
      * Outputs username, song name, and rating of data.
+     * 
      * @param outputFile Output CSV file path created by user to output data to.
      * @throws IOException If outputfile null or empty.
      */
@@ -219,27 +48,22 @@ public class SongUserServicePA2 {
             throw new IllegalArgumentException("Output file is required and must contain a file name.");
         }
 
-        // if(outputFile.contains("/")){
-        // throw new IllegalArgumentException("System only outputs to current working
-        // folder.");
-        // }
-
-        CSVPrinterService printerService = null;
+        service_CSVPrinter printerService = null;
 
         try {
             String[] headers = new String[] { "username", "song", "rating" };
 
-            printerService = new CSVPrinterService(outputFile, headers);
+            printerService = new service_CSVPrinter(outputFile, headers);
             // Step through each user
-            for (Map.Entry<String, TreeMap<String, Double>> entry : users.entrySet()) {
+            for (Map.Entry<String, data_User> entry : fileService.getUserList().entrySet()) {
 
                 String userName = entry.getKey();
-                TreeMap<String, Double> songNameRating = entry.getValue();
+                TreeMap<String, Double> songNameRating = entry.getValue().getSongList();
 
                 // Step through each song/rating for this user
                 Double rating;
                 Object[] record;
-                for (String songName : this.masterSongNameList) {
+                for (String songName : fileService.getMasterSongNameList()) {
                     if (songNameRating.containsKey(songName)) {
                         rating = songNameRating.get(songName);
                         Integer intRating = rating.intValue();

@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Cs214Cluster implements Comparable<Cs214Cluster>{
+public class data_Cluster implements Comparable<data_Cluster> {
     // centroid array and song array fields.
     private final ArrayList<Double> initialCentroid = new ArrayList<>();
 
@@ -10,16 +10,15 @@ public class Cs214Cluster implements Comparable<Cs214Cluster>{
 
     private String clusterUserChoiceSongName;
 
-    
-    public Cs214Cluster(String clusterUserChoiceSongName){
+    public data_Cluster(String clusterUserChoiceSongName) {
         this.clusterUserChoiceSongName = clusterUserChoiceSongName;
     }
-    
+
     @Override
-    public int compareTo(Cs214Cluster other) {
+    public int compareTo(data_Cluster other) {
         return this.clusterUserChoiceSongName.compareTo(other.clusterUserChoiceSongName);
     }
-    
+
     public String getClusterUserChoiceSongName() {
         return clusterUserChoiceSongName;
     }
