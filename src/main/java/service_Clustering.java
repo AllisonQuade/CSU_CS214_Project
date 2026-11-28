@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -157,8 +158,9 @@ public class service_Clustering {
 
     private boolean validateAllSongsUserChoice(boolean allClustersContainOnlyUserChoice, data_Cluster cluster,
             String[] userSongNamesSelection) {
+        List<String> songNameSelection = Arrays.asList(userSongNamesSelection);
         for (String songName : cluster.getSongs()) {
-            if (!Arrays.asList(userSongNamesSelection).contains(songName)) {
+            if (!songNameSelection.contains(songName)) {
                 allClustersContainOnlyUserChoice = false;
                 break;
             }
@@ -186,4 +188,22 @@ public class service_Clustering {
         }
     }
 
+    public void proccessingClustering(String[] userSongNamesSelection, int kNumberOfCentroids,
+            boolean removeUserChoiceSongsFromRecommendation) {
+        String[] initialKCentroidSongs = new String[kNumberOfCentroids];
+        System.arraycopy(userSongNamesSelection, 0, initialKCentroidSongs, 0, kNumberOfCentroids);
+        // k-means cluster methods
+        initializeKCentroids(initialKCentroidSongs);
+        iterateKMeansClustering(10);
+        if (removeUserChoiceSongsFromRecommendation) {
+            removeUserChoiceSongsFromRecommendation();
+        }
+
+        emptyClusterAndUserChoiceValidationCheck(userSongNamesSelection);
+        UserChoiceValidationCheck(userSongNamesSelection);
+    }
+
+    public void proccessingClustering(String[] userSongNamesSelection, boolean removeUserChoiceSongsFromRecommendation) {
+            proccessingClustering(userSongNamesSelection, userSongNamesSelection.length, removeUserChoiceSongsFromRecommendation);
+    }
 }

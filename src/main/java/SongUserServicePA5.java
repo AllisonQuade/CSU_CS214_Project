@@ -53,14 +53,8 @@ public class SongUserServicePA5 {
         fileService.updateRunningMeanStandardDeviation();
         fileService.normalizeRatingWithSongs();
 
-        // k-means cluster methods
         clusteringService = new service_Clustering(fileService.getSongList());
-        clusteringService.initializeKCentroids(userSongSelection);
-        clusteringService.iterateKMeansClustering(10);
-        clusteringService.removeUserChoiceSongsFromRecommendation();
-
-        clusteringService.emptyClusterAndUserChoiceValidationCheck(this.userSongNamesSelection);
-        clusteringService.UserChoiceValidationCheck(this.userSongNamesSelection);
+        clusteringService.proccessingClustering(userSongSelection, true);
     }
 
     public void validateDuplicateUserSelection() {

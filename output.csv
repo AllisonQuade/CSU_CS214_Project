@@ -1,4 +1,7 @@
-user choice,recommendation
-song3,song4
-song6,song1
-song6,song2
+username,song,rating
+user1,song1,3
+user1,song2,NaN
+user1,song3,5
+user2,song1,NaN
+user2,song2,4
+user2,song3,1

@@ -19,7 +19,8 @@ public class service_SongSimilarity {
      * @return matrix of song similarity.
      * @throws IOException if validate cooperative users fail.
      */
-    public Double[][] calcSongSimilarity(TreeMap<String, data_User> userList, List<String> masterSongNameList) throws IOException {
+    public Double[][] calcSongSimilarity(TreeMap<String, data_User> userList, List<String> masterSongNameList)
+            throws IOException {
         int numSongs = masterSongNameList.size();
         this.songSimilarityMatrix = new Double[numSongs][numSongs];
 
@@ -42,16 +43,16 @@ public class service_SongSimilarity {
     // Distance between song i and song s across all users (NaN if no user rated
     // both)
     private double calcSongPairDistance(int firstSongIndex, int secondSongIndex, TreeMap<String, data_User> userList) {
-        double[] song1Rating = new double[userList.size()];
-        double[] song2Rating = new double[userList.size()];
+        double[] song1NormalizedRating = new double[userList.size()];
+        double[] song2NormalizedRating = new double[userList.size()];
         boolean songsHaveSharedUser = false;
         int userIndex = 0; // index tracker for the for-each loop
 
         for (Map.Entry<String, data_User> userEntry : userList.entrySet()) {
             double[] normalizedRatingPair = fillUserRatings(userEntry, firstSongIndex, secondSongIndex);
             if (normalizedRatingPair != null) {
-                song1Rating[userIndex] = normalizedRatingPair[0];
-                song2Rating[userIndex] = normalizedRatingPair[1];
+                song1NormalizedRating[userIndex] = normalizedRatingPair[0];
+                song2NormalizedRating[userIndex] = normalizedRatingPair[1];
                 songsHaveSharedUser = true;
             }
             userIndex++;
@@ -60,7 +61,21 @@ public class service_SongSimilarity {
         if (!songsHaveSharedUser) {
             return Double.NaN;
         }
-        return new EuclideanDistance().compute(song1Rating, song2Rating);
+        return calcEuclideanDistance(song1NormalizedRating, song2NormalizedRating);
+    }
+
+    public double calcEuclideanDistance(double[] song1NormalizedRating, double[] song2NormalizedRating) {
+        return new EuclideanDistance().compute(song1NormalizedRating, song2NormalizedRating);
+    }
+
+    public double calcEuclideanDistance(ArrayList<Double> song1NormalizedRating, ArrayList<Double> song2NormalizedRating) {
+        double[] song1NormalizedRatingArray = song1NormalizedRating.stream()
+                .mapToDouble(Double::doubleValue)
+                .toArray();
+        double[] song2NormalizedRatingArray = song2NormalizedRating.stream()
+                .mapToDouble(Double::doubleValue)
+                .toArray();
+        return calcEuclideanDistance(song1NormalizedRatingArray, song2NormalizedRatingArray);
     }
 
     /**

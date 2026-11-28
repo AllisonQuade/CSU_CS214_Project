@@ -4,21 +4,12 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
-
         {
             "type": "java",
             "name": "Cs214Project",
             "request": "launch",
             "mainClass": "Cs214Project",
-            "projectName": "CSU_CS214_Project"
-        },
-        {
-            "type": "java",
-            "name": "Cs214Project",
-            "request": "launch",
-            "mainClass": "Cs214Project",
-            "projectName": "CSU_CS214_Project"
+            "projectName": "workspace"
         },
         {
             "type": "java",
@@ -34,8 +25,8 @@
             "mainClass": "Cs214Project",
             "projectName": "CSU_CS214_Project",
             "args": [
-                "database/files/file1.csv",
-                "OutputPA1.csv"
+                "database/files/testfiles/maintests/test_mainPA1_success_input.csv",
+                "database/files/testfiles/maintests/test_mainPA1_success_output.csv"
             ]
         },
         {
@@ -101,6 +92,20 @@
                 "-r",
                 "song8",
                 "song1"
+            ]
+        },
+        {
+            "type": "java",
+            "request": "launch",
+            "name": "Launch Cs214Project PA6",
+            "mainClass": "Cs214Project",
+            "projectName": "CSU_CS214_Project",
+            "args": [
+                "database/files/rock.csv",
+                "OutputPA6.csv",
+                "-s",
+                "1",
+                "Bohemian Rhapsody"
             ]
         }
     ]

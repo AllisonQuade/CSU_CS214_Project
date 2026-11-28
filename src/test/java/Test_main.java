@@ -17,7 +17,7 @@ public class Test_main {
             file.delete();
         }
 
-        Cs214Project.main(new String[] { inputFileName, outputFileName});
+        Cs214Project.main(new String[] {inputFileName, outputFileName});
 
         assertEquals(true, file.exists(), "test_mainPA1_success did not return expected exception.");
     }
