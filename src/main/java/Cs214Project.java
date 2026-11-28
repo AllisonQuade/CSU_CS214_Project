@@ -16,63 +16,6 @@ import java.util.TreeMap;
  * Cs214Project Main
  */
 public class Cs214Project {
-
-    /**
-     * Calls methods to validate arguments passed in by user,
-     * 
-     * @param args User input.
-     */
-    public static void validateArguments(String[] args) {
-        validateFirstTwoArguments(args);
-
-        if (args.length == 3) {
-            validateThreeArgMenu(args);
-        } else if (args.length > 3) {
-            validateMoreThanThreeArgMenu(args);
-        }
-    }
-
-    public static void validateThreeArgMenu(String[] args) {
-        if (args[2].equals("-r")) {
-            throw new IllegalArgumentException("must select at least one song for recommendations");
-        }
-
-        ArrayList<String> commands = new ArrayList<>(Arrays.asList("-a", "-u", "-p", ""));
-        if (!commands.contains(args[2])) {
-            throw new IllegalArgumentException("\"-a\" or \"-u\" or \"-p\"  required for PA2 or PA4.");
-        }
-    }
-
-    public static void validateMoreThanThreeArgMenu(String[] args) {
-        ArrayList<String> commands = new ArrayList<>(Arrays.asList("-r", "-s"));
-        if (!commands.contains(args[2])) {
-            throw new IllegalArgumentException("\"-r\" or \"-s\" required for PA5 or PA6.");
-        }
-
-        if (args[2].equals("-s") && args.length < 5) {
-            throw new IllegalArgumentException("-s requires minimum of 5 arguments." + args.length + " passed in.");
-        }
-    }
-
-    /**
-     * Checks if there are at least 2 or three arguments given.
-     * 
-     * @param args User input.
-     */
-    public static void validateFirstTwoArguments(String[] args) {
-        if (args.length < 2) {
-            throw new IllegalArgumentException(args.length + " is out of bounds. Requires at least two arguments.");
-        }
-
-        if (util_FormatOutput.isNullOrEmpty(args[0])) {
-            throw new IllegalArgumentException("Arguments 1 is required. It must include file input path.");
-        }
-
-        if (util_FormatOutput.isNullOrEmpty(args[1])) {
-            throw new IllegalArgumentException("Arguments 2 is required. It must include output file.");
-        }
-    }
-
     /**
      * Runs program for each PA
      * 
@@ -153,4 +96,61 @@ public class Cs214Project {
             }
         }
     }
+
+    /**
+     * Calls methods to validate arguments passed in by user,
+     * 
+     * @param args User input.
+     */
+    public static void validateArguments(String[] args) {
+        validateFirstTwoArguments(args);
+
+        if (args.length == 3) {
+            validateThreeArgMenu(args);
+        } else if (args.length > 3) {
+            validateMoreThanThreeArgMenu(args);
+        }
+    }
+
+    public static void validateThreeArgMenu(String[] args) {
+        if (args[2].equals("-r")) {
+            throw new IllegalArgumentException("must select at least one song for recommendations");
+        }
+
+        ArrayList<String> commands = new ArrayList<>(Arrays.asList("-a", "-u", "-p", ""));
+        if (!commands.contains(args[2])) {
+            throw new IllegalArgumentException("\"-a\" or \"-u\" or \"-p\"  required for PA2 or PA4.");
+        }
+    }
+
+    public static void validateMoreThanThreeArgMenu(String[] args) {
+        ArrayList<String> commands = new ArrayList<>(Arrays.asList("-r", "-s"));
+        if (!commands.contains(args[2])) {
+            throw new IllegalArgumentException("\"-r\" or \"-s\" required for PA5 or PA6.");
+        }
+
+        if (args[2].equals("-s") && args.length < 5) {
+            throw new IllegalArgumentException("-s requires minimum of 5 arguments." + args.length + " passed in.");
+        }
+    }
+
+    /**
+     * Checks if there are at least 2 or three arguments given.
+     * 
+     * @param args User input.
+     */
+    public static void validateFirstTwoArguments(String[] args) {
+        if (args.length < 2) {
+            throw new IllegalArgumentException(args.length + " is out of bounds. Requires at least two arguments.");
+        }
+
+        if (util_FormatOutput.isNullOrEmpty(args[0])) {
+            throw new IllegalArgumentException("Arguments 1 is required. It must include file input path.");
+        }
+
+        if (util_FormatOutput.isNullOrEmpty(args[1])) {
+            throw new IllegalArgumentException("Arguments 2 is required. It must include output file.");
+        }
+    }
+
 }
